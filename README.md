@@ -10,6 +10,9 @@
    - 자바스크립트의 파일을 타입스크립트 파일로 변환
 2. 명시적인 `any` 선언하기
    - `tsconfig.json` 파일에 `noImplicitAny`값을 `ture`로 변경
+   - 가능한한 구체적인 타입으로 타입 정의
+3. 프로젝트 환경 구성
+   - babel, eslint, prettier 등의 설정
 
 - [존스 홉킨스 코로나 현황](https://www.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6)
 - [Postman API](https://documenter.getpostman.com/view/10808728/SzS8rjbc?version=latest#27454960-ea1c-4b91-a0b6-0468bb4e6712)
