@@ -1,6 +1,16 @@
-import axios, {AxiosResponse} from 'axios';
-import * as Chart from "chart.js";
-import {Country, CountrySummaryInfo, CountrySummaryResponse, CovidSummaryResponse} from './covid/index';
+// 라이브러리 로딩
+// import 변수명 from '라이브러리 이름';
+// // 변수, 함수 임포트 문법
+// import {} from '파일 상대 경로';
+import axios, { AxiosResponse } from 'axios';
+import Chart from 'chart.js';
+// 타입 모듈
+import {
+  CountrySummaryResponse,
+  CovidSummaryResponse,
+  Country,
+  CountrySummaryInfo,
+} from './covid/index';
 
 // utils
 function $(selector: string) {
@@ -11,8 +21,8 @@ function getUnixTimestamp(date: Date | string) {
 }
 
 // DOM
-let element: Element | HTMLElement | HTMLParagraphElement;
-const confirmedTotal = $('.confirmed-total') as HTMLElement;
+// let a: Element | HTMLElement | HTMLParagraphElement;
+const confirmedTotal = $('.confirmed-total') as HTMLSpanElement;
 const deathsTotal = $('.deaths') as HTMLParagraphElement;
 const recoveredTotal = $('.recovered') as HTMLParagraphElement;
 const lastUpdatedTime = $('.last-updated-time') as HTMLParagraphElement;
@@ -22,12 +32,12 @@ const recoveredList = $('.recovered-list');
 const deathSpinner = createSpinnerElement('deaths-spinner');
 const recoveredSpinner = createSpinnerElement('recovered-spinner');
 
-function createSpinnerElement(id: any) {
+function createSpinnerElement(id: string) {
   const wrapperDiv = document.createElement('div');
   wrapperDiv.setAttribute('id', id);
   wrapperDiv.setAttribute(
-    'class',
-    'spinner-wrapper flex justify-center align-center'
+      'class',
+      'spinner-wrapper flex justify-center align-center'
   );
   const spinnerDiv = document.createElement('div');
   spinnerDiv.setAttribute('class', 'ripple-spinner');
@@ -39,7 +49,6 @@ function createSpinnerElement(id: any) {
 
 // state
 let isDeathLoading = false;
-const isRecoveredLoading = false;
 
 // api
 function fetchCovidSummary(): Promise<AxiosResponse<CovidSummaryResponse>> {
@@ -47,16 +56,18 @@ function fetchCovidSummary(): Promise<AxiosResponse<CovidSummaryResponse>> {
   return axios.get(url);
 }
 
-
 enum CovidStatus {
   Confirmed = 'confirmed',
   Recovered = 'recovered',
   Deaths = 'deaths',
 }
 
-function fetchCountryInfo(countryCode: string, status: CovidStatus):Promise<AxiosResponse<CountrySummaryResponse>> {
-  // params: confirmed, recovered, deaths
-  const url = `https://api.covid19api.com/country/${countryCode}/status/${status}`;
+function fetchCountryInfo(
+    countryName: string,
+    status: CovidStatus
+): Promise<AxiosResponse<CountrySummaryResponse>> {
+  // status params: confirmed, recovered, deaths
+  const url = `https://api.covid19api.com/country/${countryName}/status/${status}`;
   return axios.get(url);
 }
 
@@ -74,8 +85,8 @@ function initEvents() {
 async function handleListClick(event: MouseEvent) {
   let selectedId;
   if (
-    event.target instanceof HTMLParagraphElement ||
-    event.target instanceof HTMLSpanElement
+      event.target instanceof HTMLParagraphElement ||
+      event.target instanceof HTMLSpanElement
   ) {
     selectedId = event.target.parentElement.id;
   }
@@ -90,16 +101,16 @@ async function handleListClick(event: MouseEvent) {
   startLoadingAnimation();
   isDeathLoading = true;
   const { data: deathResponse } = await fetchCountryInfo(
-    selectedId,
-    CovidStatus.Deaths
+      selectedId,
+      CovidStatus.Deaths
   );
   const { data: recoveredResponse } = await fetchCountryInfo(
-    selectedId,
-    CovidStatus.Recovered
+      selectedId,
+      CovidStatus.Recovered
   );
   const { data: confirmedResponse } = await fetchCountryInfo(
-    selectedId,
-    CovidStatus.Confirmed
+      selectedId,
+      CovidStatus.Confirmed
   );
   endLoadingAnimation();
   setDeathsList(deathResponse);
@@ -112,7 +123,8 @@ async function handleListClick(event: MouseEvent) {
 
 function setDeathsList(data: CountrySummaryResponse) {
   const sorted = data.sort(
-    (a: CountrySummaryInfo, b: CountrySummaryInfo) => getUnixTimestamp(b.Date) - getUnixTimestamp(a.Date)
+      (a: CountrySummaryInfo, b: CountrySummaryInfo) =>
+          getUnixTimestamp(b.Date) - getUnixTimestamp(a.Date)
   );
   sorted.forEach((value: CountrySummaryInfo) => {
     const li = document.createElement('li');
@@ -138,7 +150,8 @@ function setTotalDeathsByCountry(data: CountrySummaryResponse) {
 
 function setRecoveredList(data: CountrySummaryResponse) {
   const sorted = data.sort(
-    (a: CountrySummaryInfo, b: CountrySummaryInfo) => getUnixTimestamp(b.Date) - getUnixTimestamp(a.Date)
+      (a: CountrySummaryInfo, b: CountrySummaryInfo) =>
+          getUnixTimestamp(b.Date) - getUnixTimestamp(a.Date)
   );
   sorted.forEach((value: CountrySummaryInfo) => {
     const li = document.createElement('li');
@@ -181,11 +194,11 @@ async function setupData() {
   setLastUpdatedTimestamp(data);
 }
 
-function renderChart(data: any, labels: any) {
-  const canvas = <HTMLCanvasElement> document.getElementById('lineChart');
-  const ctx = canvas.getContext('2d');
-  Chart.defaults.color = '#f5eaea';
-  Chart.defaults.font.family = 'Exo 2';
+function renderChart(data: number[], labels: string[]) {
+  const lineChart = $('#lineChart') as HTMLCanvasElement;
+  const ctx = lineChart.getContext('2d');
+  Chart.defaults.global.defaultFontColor = '#f5eaea';
+  Chart.defaults.global.defaultFontFamily = 'Exo 2';
   new Chart(ctx, {
     type: 'line',
     data: {
@@ -204,39 +217,41 @@ function renderChart(data: any, labels: any) {
 }
 
 function setChartData(data: CountrySummaryResponse) {
-  const chartData = data.slice(-14).map((value: CountrySummaryInfo) => value.Cases);
+  const chartData = data
+      .slice(-14)
+      .map((value: CountrySummaryInfo) => value.Cases);
   const chartLabel = data
-    .slice(-14)
-    .map((value: CountrySummaryInfo) =>
-      new Date(value.Date).toLocaleDateString().slice(5, -1)
-    );
+      .slice(-14)
+      .map((value: CountrySummaryInfo) =>
+          new Date(value.Date).toLocaleDateString().slice(5, -1)
+      );
   renderChart(chartData, chartLabel);
 }
 
 function setTotalConfirmedNumber(data: CovidSummaryResponse) {
   confirmedTotal.innerText = data.Countries.reduce(
-    (total: number, current: Country) => (total += current.TotalConfirmed),
-    0
+      (total: number, current: Country) => (total += current.TotalConfirmed),
+      0
   ).toString();
 }
 
 function setTotalDeathsByWorld(data: CovidSummaryResponse) {
   deathsTotal.innerText = data.Countries.reduce(
-    (total:number, current: Country) => (total += current.TotalDeaths),
-    0
+      (total: number, current: Country) => (total += current.TotalDeaths),
+      0
   ).toString();
 }
 
 function setTotalRecoveredByWorld(data: CovidSummaryResponse) {
   recoveredTotal.innerText = data.Countries.reduce(
-    (total: number, current: Country) => (total += current.TotalRecovered),
-    0
+      (total: number, current: Country) => (total += current.TotalRecovered),
+      0
   ).toString();
 }
 
 function setCountryRanksByConfirmedCases(data: CovidSummaryResponse) {
   const sorted = data.Countries.sort(
-    (a: Country, b: Country) => b.TotalConfirmed - a.TotalConfirmed
+      (a: Country, b: Country) => b.TotalConfirmed - a.TotalConfirmed
   );
   sorted.forEach((value: Country) => {
     const li = document.createElement('li');

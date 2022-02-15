@@ -1,8 +1,8 @@
 {
-  "name": "typescript-project",
+  "name": "project",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "최종 프로젝트 폴더입니다",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc"
@@ -11,18 +11,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/chart.js": "^2.9.35",
-    "axios": "^0.25.0"
+    "axios": "^0.21.0",
+    "chart.js": "^2.9.4"
   },
   "devDependencies": {
-    "@babel/core": "^7.17.2",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-typescript": "^7.16.7",
-    "@typescript-eslint/eslint-plugin": "^5.11.0",
-    "@typescript-eslint/parser": "^5.11.0",
-    "eslint": "^8.9.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.5.1",
-    "typescript": "^4.5.5"
+    "@babel/core": "^7.12.7",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-typescript": "^7.12.7",
+    "@types/chart.js": "^2.9.30",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "clean-webpack-plugin": "^3.0.0",
+    "eslint": "^7.14.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.2.0",
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.2",
+    "webpack": "^5.18.0",
+    "webpack-cli": "^4.4.0"
   }
 }

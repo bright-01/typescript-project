@@ -12,7 +12,7 @@ module.exports = {
   plugins: ['prettier', '@typescript-eslint'],
   rules: {
     'prettier/prettier': [
-      'warn',
+      'error',
       {
         singleQuote: true,
         semi: true,
