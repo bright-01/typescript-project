@@ -13,7 +13,7 @@ import {
 } from './covid/index';
 
 // utils
-function $<T extends HTMLElement>(selector: string) {
+function $<T extends HTMLElement = HTMLDivElement>(selector: string) { // default 값이 HTMLDivElement ( div )
   // return document.querySelector(selector);
   const element = document.querySelector(selector);
   return element as T;
